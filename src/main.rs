@@ -1,8 +1,15 @@
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc};
 
 use someql::library::*;
 
 fn main() {
+
+    let k = tables::TableKey::Single(Arc::new(52i32));
+
+    let table = tables::Table {
+        alias: "Users".into(),
+        // value: HashMap::new(),
+    };
 
 
     let input = r"#
