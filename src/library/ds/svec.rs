@@ -7,7 +7,7 @@ use std::{collections::VecDeque, fmt::Debug, ops::Index};
 /// This gets represented in memory exactly like a `VecDeque<T>`.
 #[repr(transparent)]
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord)]
-pub struct SVec<T: PartialOrd + Clone> {
+pub struct SVec<T: PartialOrd> {
     data: VecDeque<T>
 }
 
