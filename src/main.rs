@@ -1,26 +1,36 @@
 use std::{collections::HashMap, sync::Arc};
 
 use someql::library::*;
-use tables::{Primative, TableValue, TableValueContainer};
+use tables::{Primitive, TableValue, ColType};
 
 fn main() {
 
-    let k = tables::TableKey::Single(Arc::new(52i32));
+    // let k = tables::TableKey::Single(Arc::new(52i32));
 
-    let mut table = tables::Table {
-        alias: "Users".into(),
-        value: HashMap::new(),
-    };
+    let mut table = tables::Table::new(
+        "Users".into(),
+        HashMap::new(),
+    );
 
-    let table_col = Arc::new(TableValue {
-        data: vec![0i32],
-        unique: false,
+    table.insert("id".into(), Arc::new(TableValue {
+        data: vec![
+            0i32,
+            1i32,
+        ],
+        unique: true,
         primary_key: true,
-    });
+    })).unwrap();
 
-    table.value.insert("id".into(), table_col);
+    table.insert("f_name".into(), Arc::new(TableValue {
+        data: vec![
+            "Hello".to_string(),
+            "Hi".to_string(),
+        ],
+        unique: false,
+        primary_key: false,
+    })).unwrap();
 
-
+    /*
     let input = r"#
         CREATE TABLE Users (
 
@@ -30,6 +40,11 @@ fn main() {
 
         );
     #";
+    */
+
+    for v in table.value.values() {
+        println!("{}", v.to_string());
+    }
 
     let txt = "Hello";
 
