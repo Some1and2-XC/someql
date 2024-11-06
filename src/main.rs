@@ -12,22 +12,24 @@ fn main() {
         HashMap::new(),
     );
 
-    table.insert("id".into(), Arc::new(TableValue {
+    table.insert_col("id".into(), Arc::new(TableValue {
         data: vec![
             0i32,
             1i32,
         ],
         unique: true,
         primary_key: true,
+        auto: true,
     })).unwrap();
 
-    table.insert("f_name".into(), Arc::new(TableValue {
+    table.insert_col("f_name".into(), Arc::new(TableValue {
         data: vec![
             "Hello".to_string(),
             "Hi".to_string(),
         ],
         unique: false,
         primary_key: false,
+        auto: false,
     })).unwrap();
 
     /*

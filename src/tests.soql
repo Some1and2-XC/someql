@@ -7,20 +7,3 @@ CREATE TABLE Users (
 );
 
 
-
-i8
-u8
-i32
-u32
-i64
-u64
-bool
-
-int => i32
-boolean => bool
-
-
-
-int
-
-BOOLEAN

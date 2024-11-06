@@ -3,72 +3,26 @@ use std::{collections::HashMap, fmt::{Debug, Display}, sync::Arc};
 // use super::Result;
 
 /// Trait that is implemented on types that are used
-pub trait Primitive {
-    fn to_string(&self) -> String;
-}
+pub trait Primitive: Debug + Display { }
 
-impl Primitive for String {
-    fn to_string(&self) -> String {
-        return format!("{}", self);
-    }
-}
+impl Primitive for bool { }
 
-impl Primitive for isize {
-    fn to_string(&self) -> String {
-        return format!("{}", self);
-    }
-}
-impl Primitive for usize {
-    fn to_string(&self) -> String {
-        return format!("{}", self);
-    }
-}
+impl Primitive for String { }
 
-impl Primitive for i32 {
-    fn to_string(&self) -> String {
-        return format!("{}", self);
-    }
-}
-impl Primitive for u32 {
-    fn to_string(&self) -> String {
-        return format!("{}", self);
-    }
-}
+impl Primitive for isize { }
+impl Primitive for usize { }
 
-impl Primitive for Arc<i32> {
-    fn to_string(&self) -> String {
-        return format!("{}", self);
-    }
-}
-impl Primitive for Arc<u32> {
-    fn to_string(&self) -> String {
-        return format!("{}", self);
-    }
-}
+impl Primitive for i32 { }
+impl Primitive for u32 { }
 
-impl Primitive for i64 {
-    fn to_string(&self) -> String {
-        return format!("{}", self);
-    }
-}
-impl Primitive for u64 {
-    fn to_string(&self) -> String {
-        return format!("{}", self);
-    }
-}
+impl Primitive for i64 { }
+impl Primitive for u64 { }
 
 pub struct Table {
 
     pub alias: String,
-    // The first dyn is just because it is a trait. Even though we are probably
-    // only going to be implementing it once (TableValueContainer).
-    // The second dyn is for the actual data type of the inner arr.
-    // Even though we say "dyn" we don't have Vec<Box<dyn T>> which is why
-    // this is as ugly as it is. We are then left with just a Vec<T>.
-    // Good ol' dynamic dispatch for static dispatch I guess?
     /// The inner values of the table. The `String` in the HashMap references the
     /// name of the table column. The TableValueContainer stores the actual data.
-    // Actually I think I found a trait bound that can't be fulfilled :/
     pub value: HashMap<String, Arc<dyn ColTypeErased>>,
     size: usize,
 
@@ -84,7 +38,14 @@ impl Table {
         };
     }
 
-    pub fn insert(&mut self, k: String, v: Arc<dyn ColTypeErased>) -> Result<(), Arc<dyn ColTypeErased>> {
+    /// Method for inserting a row into the database.
+    pub fn insert_row(&mut self, cols: Vec<String>, values: Vec<Arc<dyn ColTypeErased>>) -> Result<(), ()> {
+
+        return Ok(());
+
+    }
+
+    pub fn insert_col(&mut self, k: String, v: Arc<dyn ColTypeErased>) -> Result<(), Arc<dyn ColTypeErased>> {
 
         if self.value.len() == 0 {
             self.size = v.get_size();
@@ -108,17 +69,17 @@ impl Table {
 
     }
 
+    /*
     pub fn to_string(&self) -> String {
 
         let mut out_str = self.alias.clone();
 
         out_str += "\n";
 
-
-
         self.value.keys()
 
     }
+    */
 
 }
 
@@ -183,9 +144,12 @@ pub trait ColType {
 /// This struct represents a column in a table.
 pub struct TableValue<T: Primitive> {
 
+    /// This value represents the inner data of the column.
     pub data: Vec<T>,
+    /// This flag decides if the column should be unique or not.
     pub unique: bool,
     pub primary_key: bool,
+    pub auto: bool,
 
 }
 

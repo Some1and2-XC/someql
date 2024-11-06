@@ -8,3 +8,5 @@ pub mod tables;
 
 mod result;
 pub use result::Result;
+
+pub mod errors;
