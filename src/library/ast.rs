@@ -4,29 +4,8 @@ use std::sync::{Arc, RwLock};
 type Node<T> = TreeNode<Arc<T>>;
 type LockNode<T> = Arc<RwLock<TreeNode<Arc<T>>>>;
 
-pub trait SyntaxNode {
-    fn to_string(&self) -> String;
-}
-
-impl Display for dyn SyntaxNode {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        return write!(f, "{}", self.to_string());
-    }
-}
-
-impl Debug for dyn SyntaxNode {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        return write!(f, "{}", self.to_string());
-    }
-}
-
-impl SyntaxNode for &str {
-
-    fn to_string(&self) -> String {
-        return format!("{}", self);
-    }
-
-}
+pub trait SyntaxNode: Display + Debug { }
+impl SyntaxNode for &str { }
 
 /// Struct representing the ast tree.
 #[derive(Clone, Debug)]

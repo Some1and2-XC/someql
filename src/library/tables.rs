@@ -106,7 +106,10 @@ impl Debug for dyn ColTypeErased {
 impl<T: ColType> ColTypeErased for T {
 
     fn get_data(&self) -> Vec<&dyn Primitive> {
-        return ColType::get_data(self).iter().map(|v| v as &dyn Primitive).collect();
+        return ColType::get_data(self)
+            .iter()
+            .map(|v| v as &dyn Primitive)
+            .collect();
     }
 
     fn to_string(&self) -> String {
