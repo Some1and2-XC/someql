@@ -1,8 +1,5 @@
-use std::fmt::{Display, Debug, Formatter};
+use std::fmt::{Display, Debug};
 use std::sync::{Arc, RwLock};
-
-type Node<T> = TreeNode<Arc<T>>;
-type LockNode<T> = Arc<RwLock<TreeNode<Arc<T>>>>;
 
 pub trait SyntaxNode: Display + Debug { }
 impl SyntaxNode for &str { }
@@ -32,6 +29,12 @@ impl TreeNode<Arc<dyn SyntaxNode>> {
             left: None,
             right: None,
         });
+
+    }
+
+    pub fn set_left(&mut self, left: Arc<RwLock<TreeNode<Arc<dyn SyntaxNode>>>>) -> () {
+
+        self.left = Some(left);
 
     }
 
@@ -69,14 +72,4 @@ impl From<TreeNode<Arc<dyn SyntaxNode>>> for Arc<RwLock<TreeNode<Arc<dyn SyntaxN
         return Arc::new(RwLock::new(value));
     }
 
-}
-
-pub enum Datatypes {
-    I8,
-    U8,
-    I32,
-    U32,
-    I64,
-    U64,
-    BOOL
 }

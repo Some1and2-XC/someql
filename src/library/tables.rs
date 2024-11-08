@@ -1,22 +1,69 @@
-use std::{collections::HashMap, fmt::{Debug, Display}, sync::Arc};
+use std::{collections::HashMap, fmt::{Debug, Display}, panic::UnwindSafe, sync::Arc};
 
 // use super::Result;
 
+struct AutoAble {}
+
 /// Trait that is implemented on types that are used
-pub trait Primitive: Debug + Display { }
+pub trait Primitive: Debug + Display + UnwindSafe{
 
-impl Primitive for bool { }
+    fn get_next(&self) -> i128;
+    fn autoable(&self) -> bool;
 
-impl Primitive for String { }
+}
 
-impl Primitive for isize { }
-impl Primitive for usize { }
+impl Primitive for bool {
 
-impl Primitive for i32 { }
-impl Primitive for u32 { }
+    fn autoable(&self) -> bool { return false; }
+    fn get_next(&self) -> i128 { panic!("Can't get next value from: {:?}!", self); }
 
-impl Primitive for i64 { }
-impl Primitive for u64 { }
+}
+
+impl Primitive for String {
+
+    fn autoable(&self) -> bool { return false; }
+    fn get_next(&self) -> i128 { panic!("Can't get next value from: {:?}!", self); }
+
+}
+
+impl Primitive for isize {
+
+    fn autoable(&self) -> bool { return true; }
+    fn get_next(&self) -> i128{ return *self as i128 + 1; }
+
+}
+impl Primitive for usize {
+
+    fn autoable(&self) -> bool { return true; }
+    fn get_next(&self) -> i128 { return *self as i128 + 1; }
+
+}
+
+impl Primitive for i32 {
+
+    fn autoable(&self) -> bool { return true; }
+    fn get_next(&self) -> i128 { return *self as i128 + 1; }
+
+}
+impl Primitive for u32 {
+
+    fn autoable(&self) -> bool { return true; }
+    fn get_next(&self) -> i128 { return *self as i128 + 1; }
+
+}
+
+impl Primitive for i64 {
+
+    fn autoable(&self) -> bool { return true; }
+    fn get_next(&self) -> i128 { return *self as i128 + 1; }
+
+}
+impl Primitive for u64 {
+
+    fn autoable(&self) -> bool { return true; }
+    fn get_next(&self) -> i128 { return *self as i128 + 1; }
+
+}
 
 pub struct Table {
 
@@ -30,6 +77,7 @@ pub struct Table {
 
 impl Table {
 
+    /// This method creates an instance of a new table.
     pub fn new(alias: String, value: HashMap<String, Arc<dyn ColTypeErased>>) -> Self {
         return Self {
             alias,
@@ -39,7 +87,16 @@ impl Table {
     }
 
     /// Method for inserting a row into the database.
+    /// Takes the keys from the `cols` value and adds the `values` values.
     pub fn insert_row(&mut self, cols: Vec<String>, values: Vec<Arc<dyn ColTypeErased>>) -> Result<(), ()> {
+
+        let all_keys: Vec<&String> = self.value.keys().collect();
+
+        for k in cols {
+
+
+        }
+
 
         return Ok(());
 
@@ -69,17 +126,6 @@ impl Table {
 
     }
 
-    /*
-    pub fn to_string(&self) -> String {
-
-        let mut out_str = self.alias.clone();
-
-        out_str += "\n";
-
-        self.value.keys()
-
-    }
-    */
 
 }
 
@@ -95,6 +141,10 @@ pub trait ColTypeErased {
     fn to_string(&self) -> String;
     /// Method for getting the length of a column.
     fn get_size(&self) -> usize;
+    /// Method for setting data at an index.
+    fn set_data(&mut self, idx: usize, data: &dyn Primitive) -> Result<(), ()>;
+    /// Method for pushing the data to the end of the column.
+    fn push(&mut self, data: &dyn Primitive) -> Result<(), ()>;
 }
 
 impl Debug for dyn ColTypeErased {
@@ -128,6 +178,14 @@ impl<T: ColType> ColTypeErased for T {
         return self.get_size();
     }
 
+    fn set_data(&mut self, idx: usize, data: &dyn Primitive) -> Result<(), ()> {
+        todo!()
+    }
+
+    fn push(&mut self, data: &dyn Primitive) -> Result<(), ()> {
+        todo!()
+    }
+
 }
 
 /// A container interface for a table value.
@@ -139,6 +197,12 @@ pub trait ColType {
     fn is_unique(&self) -> bool;
     fn is_primary_key(&self) -> bool;
     fn get_size(&self) -> usize;
+
+    fn set_unique(&mut self, value: bool) -> ();
+    fn set_primary_key(&mut self, value: bool) -> ();
+
+    fn set_data(&mut self, idx: usize, data: Self::Item) -> Result<(), ()>;
+    fn push(&mut self, value: Self::Item) -> ();
 
 }
 
@@ -157,7 +221,7 @@ pub struct TableValue<T: Primitive> {
 }
 
 
-impl <T: Primitive + Display> ColType for TableValue<T> {
+impl <T: Primitive + Display + std::panic::UnwindSafe> ColType for TableValue<T> {
 
     type Item = T;
 
@@ -175,6 +239,32 @@ impl <T: Primitive + Display> ColType for TableValue<T> {
 
     fn get_size(&self) -> usize {
         return self.data.len();
+    }
+
+    fn set_unique(&mut self, value: bool) -> () {
+        self.unique = value;
+    }
+
+    fn set_primary_key(&mut self, value: bool) -> () {
+        self.primary_key = value;
+    }
+
+    fn set_data(&mut self, idx: usize, data: T) -> Result<(), ()>{
+
+        return match self.data.get_mut(idx) {
+            Some(v) => {
+                *v = data;
+                Ok(())
+            },
+            None => Err(()),
+        };
+
+    }
+
+    fn push(&mut self, data: T) -> () {
+
+        self.data.push(data);
+
     }
 
 }

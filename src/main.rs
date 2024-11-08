@@ -32,7 +32,6 @@ fn main() {
         auto: false,
     })).unwrap();
 
-    /*
     let input = r"#
         CREATE TABLE Users (
 
@@ -42,7 +41,6 @@ fn main() {
 
         );
     #";
-    */
 
     for v in table.value.values() {
         println!("{}", v.to_string());
